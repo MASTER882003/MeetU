@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./assets/frameworks/bootstrap/bootstrap.css">
     <link rel="stylesheet" href="./assets/frameworks/fontawesome/css/all.css">
-    <link rel="stylesheet" href="assets/css/globalCss.css" type="text/css">
+    <link rel="stylesheet" href="./assets/css/globalCss.css" type="text/css">
     <title>MeetU</title>
 </head>
 <body>
@@ -26,19 +26,26 @@
             <div class="sidebar-left">
                 <ul>
                     <li>
-                        <span>Some Test entry</span>
+                        <span>Create Server</span>
+                    </li>
+                    <li>
+                        <span>Join Server</span>
                     </li>
                 </ul>
                 <div id="user-info">
-                    <button class="btn btn-info">Login</button>
-                    <button class="btn btn-secondary">Register</button>
+                    <button id="btn-login" class="btn btn-info">Login</button>
+                    <button id="btn-register" class="btn btn-secondary">Register</button>
                 </div>
             </div>
+            
+            <div id="site-content"></div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>window.$ = window.jQuery = require('jquery');</script>
     <script src="./assets/frameworks/bootstrap/bootstrap.js"></script>
-
+    <script src="./assets/js/ipcRenderer.js"></script>
+    <script src="./assets/js/fileLoader.js"></script>
+    <script src="./assets/js/index.js"></script>
 </body>
 </html>

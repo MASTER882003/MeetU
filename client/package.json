@@ -2,8 +2,10 @@
   "name": "meetu",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "dependencies": {
+    "electron-root-path": "^1.0.16",
+    "jquery": "^3.6.0",
     "screenshot-desktop": "^1.12.7",
     "socket.io-client": "^4.4.1"
   },

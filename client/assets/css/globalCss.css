@@ -2,6 +2,12 @@ html, body {
     background-color: rgb(37, 37, 37);
     margin: 0;
     height: 100%;
+
+    --blue: rgb(0, 113, 206);
+}
+
+body * {
+    color: white;
 }
 
 .wrapper {
@@ -11,7 +17,7 @@ html, body {
 
 .header {
     border-bottom: 3px solid rgb(255, 255, 255);
-    box-shadow: 0 -10px 10px -10px rgb(0, 113, 206) inset;
+    box-shadow: 0 -10px 10px -10px var(--blue) inset;
     padding: 20px;
     height: 100px;
     position: relative;
@@ -43,7 +49,7 @@ html, body {
     position: relative;
     width: 14%;
     border-right: 3px solid rgb(255, 255, 255);
-    box-shadow: -10px 0px 10px -10px rgb(0, 113, 206) inset;
+    box-shadow: -10px 0px 10px -10px var(--blue) inset;
     height: 100%;
 }
 
@@ -51,6 +57,24 @@ html, body {
     margin: 0;
     padding: 0;
     height: 95%;
+}
+
+.sidebar-left ul li {
+    margin: 0px;
+    padding: 10px;
+    border-bottom: 1px solid white;
+    cursor: pointer;
+
+    transition: all .5s ease;
+}
+
+.sidebar-left ul li:hover {
+    background-color: white;
+    box-shadow: 0 0 10px var(--blue) inset;
+}
+
+.sidebar-left ul li:hover * {
+    color: black;
 }
 
 #user-info {
@@ -63,4 +87,10 @@ html, body {
 
 #user-info * {
     width: 50%;
+}
+
+#site-content {
+    width: 86%;
+    height: 100%;
+    position: relative;
 }
