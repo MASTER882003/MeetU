@@ -41,6 +41,19 @@ export class PacketHandler {
     }
 
     static HandleLoginPacket(client, packet) {
-        console.log(packet);
+        var username = packet.read();
+        var password = packet.read();
+
+        var loginResponsePacket = new Packet(Packet.PacketTypes.serverResponse);
+        loginResponsePacket.setRequestPacket(packet);
+
+        if(!username || !password) {
+            loginResponsePacket.write("failed");
+            client.sendTcpData(loginResponsePacket);
+            return;
+        }
+
+        loginResponsePacket.write("all received");
+        client.sendTcpData(loginResponsePacket);
     }
 }

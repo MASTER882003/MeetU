@@ -38,6 +38,11 @@ class IPCMain {
             loginPacket.write(data.username);
             loginPacket.write(data.password);
 
+            loginPacket.onResponse = (data) => {
+                console.log("Server response");
+                console.log(data);
+            }
+
             Client.GetInstance().sendTcpData(loginPacket);
         });
     }

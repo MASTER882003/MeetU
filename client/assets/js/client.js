@@ -38,6 +38,8 @@ class Client {
         });
 
         this.tcp.on("data", (data) => {
+            console.log(JSON.parse(data.toString()));
+            console.log("---------------");
             PacketHandler.PacketReceived(JSON.parse(data.toString()));
         });
 
@@ -52,6 +54,10 @@ class Client {
     sendTcpData(packet) {
         if(this.tcp) {
             this.tcp.write(JSON.stringify(packet.getJSON()));
+        }
+
+        if(packet.onResponse) {
+            PacketHandler.AddPacket(packet);
         }
     }
 
@@ -89,6 +95,8 @@ class Client {
 
 class PacketHandler {
 
+    static Packets = new Map();
+
     static PacketReceived(data) {
         var packet = Packet.CreatePacketByData(data);
 
@@ -100,6 +108,10 @@ class PacketHandler {
         }
     }
 
+    static AddPacket(packet) {
+       PacketHandler.Packets.set(packet.packetID, packet);
+    }
+
 }
 
 class Packet {
@@ -107,6 +119,19 @@ class Packet {
     static LastPacketID = 0;
 
     static PacketTypes = {
+        "serverResponse": {
+            name: "serverResponse",
+            handler: (packet) => {
+                console.log(packet);
+                if(packet.requestPacketID) {
+                    var requestPacket = PacketHandler.Packets.get(packet.requestPacketID);
+
+                    if(requestPacket && requestPacket.onResponse) {
+                        requestPacket.onResponse(packet);
+                    }
+                }
+            }
+        },
         "welcome": {
             name: "welcome",
             handler: (packet) => Client.GetInstance().handleWelcome(packet)
@@ -131,6 +156,10 @@ class Packet {
     static CreatePacketByData(jsonData) {
         var packet = new Packet(Packet.PacketTypes[jsonData.type]);
         packet.data = jsonData.data;
+
+        if(jsonData.requestPacketID) {
+            packet.requestPacket = jsonData.requestPacket;
+        }
 
         return packet;
     }

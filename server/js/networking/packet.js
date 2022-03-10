@@ -3,6 +3,11 @@ import { PacketHandler } from './packetHandler.js';
 export class Packet {
 
     static PacketTypes = {
+        
+        "serverResponse": {
+            name: "serverResponse",
+            handler: (client, packet) => {}
+        },
         "welcome": {
             name: "welcome",
             handler: (client, packet) => PacketHandler.HandleWelcomePacket(client, packet)
@@ -20,18 +25,19 @@ export class Packet {
     constructor(packetType) {
         this.packetType = packetType;
         this.data = [];
-        this.requestPacket = null;
+        this.requestPacketID = null;
     }
 
     static CreatePacketByData(jsonData) {
         var packet = new Packet(Packet.PacketTypes[jsonData.type]);
         packet.data = jsonData.data;
+        packet.packetID = jsonData.packetID;
 
         return packet;
     }
 
     setRequestPacket(packet) {
-        this.requestPacket = packet;
+        this.requestPacketID = packet.packetID;
     }
 
     write(data) {
@@ -43,11 +49,11 @@ export class Packet {
     }
 
     getJSON() {
-        if(this.requestPacket){
+        if(this.requestPacketID != null){
             return {
                 type: this.packetType.name,
                 data: this.data,
-                requestPacket: this.requestPacket
+                requestPacketID: this.requestPacketID
             }
         }
         else {
