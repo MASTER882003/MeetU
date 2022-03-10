@@ -67,16 +67,16 @@
     $("#login").on("submit", (e) => {
         e.preventDefault();
         IPCRenderer.GetInstance().ipc.send("login", { 
-            username: $("#login-username").val(),
-            password: $("#login-pass").val()
+            username: $("#login_username").val(),
+            password: $("#login_pass").val()
         });
     });
 
     $("#register").on("submit", (e) => {
         e.preventDefault();
         IPCRenderer.GetInstance().ipc.send("register", { 
-            username: $("#register-username").val(),
-            password: $("#register-pass").val()
+            username: $("#register_username").val(),
+            password: $("#register_pass").val()
         });
     });
 </script>

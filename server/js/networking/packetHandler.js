@@ -1,11 +1,6 @@
-const { Packet } = require('./packet');
+import { Packet } from './packet';
 
-class PacketHandler {
-
-    static Init() {
-        var { Server } = require('./server');
-        PacketHandler.Server = Server;
-    }
+export class PacketHandler {
 
     static HandleTCPData(client, data) {
         var packet = Packet.CreatePacketByData(data);
@@ -34,7 +29,17 @@ class PacketHandler {
             console.log("No handler for packet " + JSON.stringify(packet.getJSON()));
         }
     }
+
+
+    static HandleWelcomePacket(client, packet) {
+        console.log("Welcome message from client: " + packet.read());
+    }
+
+    static HandleUDPTestPacket(client, packet) {
+        console.log("UDP TestMessage: " + packet.read());
+    }
+
+    static HandleLoginPacket(client, packet) {
+        console.log(packet);
+    }
 }
-
-
-module.exports = { PacketHandler };

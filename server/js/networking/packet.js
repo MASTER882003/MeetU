@@ -1,13 +1,19 @@
+import { PacketHandler } from './packetHandler';
+
 class Packet {
 
     static PacketTypes = {
         "welcome": {
             name: "welcome",
-            handler: (client, data) => client.handleWelcomePacket(data)
+            handler: (client, packet) => PacketHandler.HandleWelcomePacket(client, packet)
         },
         "udpTest": {
             name: "udpTest",
-            handler: (client, data) => client.handleUDPTestPacket(data)
+            handler: (client, packet) => PacketHandler.HandleUDPTestPacket(client, packet)
+        },
+        "login": {
+            name: "login",
+            handler: (client, packet) => PacketHandler.HandleLoginPacket(client, packet)
         }
     }
 

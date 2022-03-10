@@ -1,17 +1,15 @@
-const net = require('net');
-const dgram = require('dgram');
-var shortid = require('shortid');
+import net  from 'net';
+import dgram  from 'dgram';
+import shortid from 'shortid';
 
-const { Client } = require('./client');
-const { PacketHandler } = require('./packetHandler');
+import { Client } from './client';
+import { PacketHandler } from './packetHandler';
 
-class Server {
+export class Server {
 
     static clients = new Map();
 
     static Start(tcpPort, udpPort) {
-
-        PacketHandler.Init();
 
         Server.tcpServer = net.createServer(socket => {
             var client = new Client(shortid.generate());
@@ -39,5 +37,3 @@ class Server {
     }
 
 }
-
-module.exports = { Server };

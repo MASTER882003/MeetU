@@ -1,7 +1,7 @@
-const { Packet } = require('./packet');
-const { PacketHandler } = require('./packetHandler');
+import { Packet } from './packet';
+import { PacketHandler } from './packetHandler';
 
-class Client {
+export class Client {
     constructor(id) {
         this.id = id;
         this.tcp = null;
@@ -33,16 +33,4 @@ class Client {
     sendUdpData(packet) {
         this.udp.write(JSON.stringify(packet.getJSON()));
     }
-
-
-    handleWelcomePacket(packet) {
-        console.log("Welcome message from client: " + packet.read());
-    }
-
-    handleUDPTestPacket(packet) {
-        console.log("UDP TestMessage: " + packet.read());
-    }
 }
-
-
-module.exports = { Client };

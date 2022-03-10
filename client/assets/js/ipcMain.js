@@ -1,6 +1,6 @@
 const ipc = require('electron').ipcMain;
 const { PathBuilder } = require('./pathBuilder');
-const { API } = require('./api');
+const { Client, Packet } = require('./client');
 
 const fs = require('fs');
 
@@ -32,10 +32,13 @@ class IPCMain {
             event.sender.send('loadfile-response', fileContent.toString());
         });
 
+        //login
         ipc.on("login", (event, data) => {
-            API.Get("/login", { data }, (res) => {
-                console.log(res);
-            });
+            var loginPacket = new Packet(Packet.PacketTypes.login);
+            loginPacket.write(data.username);
+            loginPacket.write(data.password);
+
+            Client.GetInstance().sendTcpData(loginPacket);
         });
     }
 

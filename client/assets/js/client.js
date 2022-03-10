@@ -81,6 +81,10 @@ class Client {
     handleUDPTest(packet) {
         console.log(packet);
     }
+
+    handleLogin(packet) {
+        
+    }
 }
 
 class PacketHandler {
@@ -110,6 +114,10 @@ class Packet {
         "udpTest": {
             name: "udpTest",
             handler: (packet) => Client.GetInstance().handleUDPTest(packet)
+        },
+        "login": {
+            name: "login",
+            handler: (packet) => Client.GetInstance().handleLogin(packet)
         }
     }
 
@@ -145,4 +153,4 @@ class Packet {
 
 }
 
-module.exports = { Client }
+module.exports = { Client, Packet }

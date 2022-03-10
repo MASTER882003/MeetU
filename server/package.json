@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "type": "module",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "express": "^4.17.3",
     "shortid": "^2.2.16",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "sync-sql": "^1.0.2"
   },
   "devDependencies": {},
   "scripts": {
