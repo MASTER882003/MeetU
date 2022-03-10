@@ -1,16 +1,20 @@
 import mysql  from 'sync-mysql';
 
-class DBConnector {
+export class DBConnector {
     constructor() {
         this.connection = new mysql({
             host: 'localhost',
             user: 'root',
             password: '',
-            databse: 'db_meetu'
+            database: 'db_meetu'
         });
     }
 
     query(sql) {
         return this.connection.query(sql);
+    }
+
+    escape(text) {
+        
     }
 }

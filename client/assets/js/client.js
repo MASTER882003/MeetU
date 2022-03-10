@@ -38,8 +38,6 @@ class Client {
         });
 
         this.tcp.on("data", (data) => {
-            console.log(JSON.parse(data.toString()));
-            console.log("---------------");
             PacketHandler.PacketReceived(JSON.parse(data.toString()));
         });
 
@@ -122,13 +120,10 @@ class Packet {
         "serverResponse": {
             name: "serverResponse",
             handler: (packet) => {
-                console.log(packet);
-                if(packet.requestPacketID) {
-                    var requestPacket = PacketHandler.Packets.get(packet.requestPacketID);
+                if(packet.requestPacket && packet.requestPacket.onResponse) {
+                    packet.requestPacket.onResponse(packet);
 
-                    if(requestPacket && requestPacket.onResponse) {
-                        requestPacket.onResponse(packet);
-                    }
+                    PacketHandler.Packets.delete(packet.requestPacket.packetID);
                 }
             }
         },
@@ -157,8 +152,12 @@ class Packet {
         var packet = new Packet(Packet.PacketTypes[jsonData.type]);
         packet.data = jsonData.data;
 
-        if(jsonData.requestPacketID) {
-            packet.requestPacket = jsonData.requestPacket;
+        if(jsonData.requestPacketID != undefined) {
+            var requestPacket = PacketHandler.Packets.get(jsonData.requestPacketID);
+
+            if(requestPacket && requestPacket.onResponse) {
+                packet.requestPacket = requestPacket;
+            }
         }
 
         return packet;

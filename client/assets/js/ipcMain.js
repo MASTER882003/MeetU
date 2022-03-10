@@ -38,9 +38,9 @@ class IPCMain {
             loginPacket.write(data.username);
             loginPacket.write(data.password);
 
-            loginPacket.onResponse = (data) => {
+            loginPacket.onResponse = (packet) => {
                 console.log("Server response");
-                console.log(data);
+                console.log(packet.data);
             }
 
             Client.GetInstance().sendTcpData(loginPacket);

@@ -19,6 +19,10 @@ export class Packet {
         "login": {
             name: "login",
             handler: (client, packet) => PacketHandler.HandleLoginPacket(client, packet)
+        },
+        "register": {
+            name: "register",
+            handler: (client, packet) => PacketHandler.HandleRegisterPacket(client, packet)
         }
     }
 
