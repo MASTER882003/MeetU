@@ -1,4 +1,5 @@
 import { Packet } from './packet.js';
+import { Server } from './server.js';
 
 export class PacketHandler {
 
@@ -19,7 +20,7 @@ export class PacketHandler {
             return;
         }
 
-        var client = PacketHandler.Server.GetClient(data.clientID);
+        var client = Server.GetClient(data.clientID);
         var packet = Packet.CreatePacketByData(data.packet);
 
         if(packet.packetType.handler) {
