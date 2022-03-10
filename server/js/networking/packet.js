@@ -1,6 +1,6 @@
-import { PacketHandler } from './packetHandler';
+import { PacketHandler } from './packetHandler.js';
 
-class Packet {
+export class Packet {
 
     static PacketTypes = {
         "welcome": {
@@ -59,5 +59,3 @@ class Packet {
     }
 
 }
-
-module.exports = { Packet };

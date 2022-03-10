@@ -1,5 +1,5 @@
-import { Packet } from './packet';
-import { PacketHandler } from './packetHandler';
+import { Packet } from './packet.js';
+import { PacketHandler } from './packetHandler.js';
 
 export class Client {
     constructor(id) {

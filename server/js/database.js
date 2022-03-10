@@ -1,4 +1,4 @@
-const mysql = require('sync-mysql');
+import mysql  from 'sync-mysql';
 
 class DBConnector {
     constructor() {

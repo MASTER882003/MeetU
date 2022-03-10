@@ -2,8 +2,8 @@ import net  from 'net';
 import dgram  from 'dgram';
 import shortid from 'shortid';
 
-import { Client } from './client';
-import { PacketHandler } from './packetHandler';
+import { Client } from './client.js';
+import { PacketHandler } from './packetHandler.js';
 
 export class Server {
 

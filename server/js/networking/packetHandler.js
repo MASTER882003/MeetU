@@ -1,4 +1,4 @@
-import { Packet } from './packet';
+import { Packet } from './packet.js';
 
 export class PacketHandler {
 
