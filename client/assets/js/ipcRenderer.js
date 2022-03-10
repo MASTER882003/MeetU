@@ -3,7 +3,6 @@ class IPCRenderer {
     static instance = null;
 
     constructor() {
-        
         this.ipc = require('electron').ipcRenderer;
     }
 

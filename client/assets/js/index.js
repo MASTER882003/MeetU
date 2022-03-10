@@ -1,3 +1,4 @@
+
 $(function() {
     $("#btn-login").on("click", () => {
         FileLoader.LoadFile("/pages/login/login.html");
@@ -9,3 +10,5 @@ $(function() {
         });
     })
 });
+
+Client.GetInstance().connect("localhost", 42069, 42031);

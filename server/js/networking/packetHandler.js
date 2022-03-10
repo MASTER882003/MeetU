@@ -1,6 +1,10 @@
 import { Packet } from './packet.js';
 import { Server } from './server.js';
 import { DBConnector } from '../database.js';
+import { PathBuilder } from '../pathBuilder.js';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import fs from 'fs';
 
 export class PacketHandler {
 
@@ -44,46 +48,107 @@ export class PacketHandler {
 
 
     static HandleWelcomePacket(client, packet) {
-        console.log("Welcome message from client: " + packet.read());
+        console.log("Welcome message from client: " + packet.read("message"));
     }
 
     static HandleUDPTestPacket(client, packet) {
-        console.log(`UDP TestMessage: '${packet.read()}'`);
+        console.log(`UDP TestMessage: '${packet.read("message")}'`);
     }
 
-    static HandleLoginPacket(client, packet) {
-        var username = packet.read();
-        var password = packet.read();
+    static async HandleLoginPacket(client, packet) {
+        var username = packet.read("username");
+        var password = packet.read("password");
 
         var loginResponsePacket = new Packet(Packet.PacketTypes.serverResponse);
         loginResponsePacket.setRequestPacket(packet);
 
         if(!username || !password) {
-            loginResponsePacket.write("failed");
+            loginResponsePacket.write("state", "failed");
             client.sendTcpData(loginResponsePacket);
             return;
         }
 
-        var result = this.DB().query("SELECT * FROM user");
+        username = this.DB().escape(username);
 
-        loginResponsePacket.write(result);
+        var result = this.DB().query(`SELECT * FROM user WHERE username='${username}'`);
+
+        if(result.length == 0) {
+            loginResponsePacket.write("state", "failed");
+            loginResponsePacket.write("message", "Username or password wrong");
+            client.sendTcpData(loginResponsePacket);
+            return;
+        }
+
+        var pwDB = result[0].password;
+        const compare = await bcrypt.compare(password, pwDB);
+
+        if(!compare) {
+            loginResponsePacket.write("state", "failed");
+            loginResponsePacket.write("message", "Username or password wrong");
+            client.sendTcpData(loginResponsePacket);
+            return;
+        }
+
+        client.user = {
+            id: result[0].id,
+            username: result[0].username,
+            img: result[0].img
+        };
+
+        //create login token
+        const token = crypto.randomBytes(16).toString("hex");
+
+        this.DB().query(`UPDATE user SET token='${token}' WHERE id=${client.user.id}`);
+
+        loginResponsePacket.write("state", "success");
+        loginResponsePacket.write("user", client.user);
+        loginResponsePacket.write("token", token);
+
         client.sendTcpData(loginResponsePacket);
     }
 
-    static HandleRegisterPacket(client, packet) {
-        var username = packet.read();
-        var password = packet.read();
+    static async HandleRegisterPacket(client, packet) {
+        var username = packet.read("username");
+        var password = packet.read("password");
 
-        var registerResponespacket = new Packet(Packet.PacketTypes.register);
+        let registerResponespacket = new Packet(Packet.PacketTypes.serverResponse);
         registerResponespacket.setRequestPacket(packet);
 
         if(username == undefined || password == undefined) {
-            registerResponespacket.write("failed");
-            registerResponespacket.write("Missing Payload");
+            registerResponespacket.write("state", "failed");
+            registerResponespacket.write("message", "Missing Payload");
+            client.sendTcpData(registerResponespacket);
+            return;
+        }
+        
+        if(username == "" || password == "") {
+            registerResponespacket.write("state", "failed");
+            registerResponespacket.write("message", "Empty username or password");
             client.sendTcpData(registerResponespacket);
             return;
         }
 
-        var usernameCheckResult = this.DB().query(`SELECT id FROM user WHERE username=`)
+        //escape username and password
+        username = this.DB().escape(username);
+
+        var usernameCheckResult = this.DB().query(`SELECT id FROM user WHERE username='${username}' LIMIT 1`);
+        //user already exists
+        if(usernameCheckResult.length > 0) {
+            registerResponespacket.write("state", "failed");
+            registerResponespacket.write("message", "User already exists");
+            client.sendTcpData(registerResponespacket);
+            return;
+        }
+
+        const pwHash = await bcrypt.hash(password, 10);
+        fs.readdir(PathBuilder.AppendToRoot("/img/pfp/defaultImages"), (err, files) => {
+
+            let profilePicture = "defaultImages/" + files[Math.floor(Math.random()*files.length)];
+
+            this.DB().query(`INSERT INTO user (username, password, img) VALUES ('${username}', '${pwHash}', '${profilePicture}')`);
+            registerResponespacket.write("state", "success");
+
+            client.sendTcpData(registerResponespacket);
+        });
     }
 }

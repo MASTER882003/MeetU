@@ -3,23 +3,22 @@ const { ClientRequest } = require('http')
 const path = require('path')
 const { Client } = require('./assets/js/client');
 const { IPCMain } = require('./assets/js/ipcMain');
-const client = Client.GetInstance();
 
 
 IPCMain.Create();
-client.connect("localhost", 42069, 42031);
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1920,
+    height: 1080,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
-  })
+  });
 
   win.loadFile('index.html')
+  win.openDevTools();
 }
 
 app.whenReady().then(() => {

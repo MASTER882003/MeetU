@@ -10,4 +10,8 @@ class FileLoader {
         IPCRenderer.GetInstance().ipc.send('loadFile', { path: path });
     }
 
+    static CreateImagePath(path) {
+       return "http://localhost:8080/pfp?path=" + path;
+    }
+
 }

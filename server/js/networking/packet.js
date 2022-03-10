@@ -28,7 +28,7 @@ export class Packet {
 
     constructor(packetType) {
         this.packetType = packetType;
-        this.data = [];
+        this.data = {};
         this.requestPacketID = null;
     }
 
@@ -44,12 +44,16 @@ export class Packet {
         this.requestPacketID = packet.packetID;
     }
 
-    write(data) {
-        this.data.push(data);
+    write(name, value) {
+        this.data[name] = value;
     }
 
-    read() {
-        return this.data.pop();
+    read(name) {
+        if(this.data[name]) {
+            return this.data[name];
+        }
+        
+        return undefined;
     }
 
     getJSON() {

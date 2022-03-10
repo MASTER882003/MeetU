@@ -1,4 +1,3 @@
-const { timeStamp } = require('console');
 const net = require('net');
 
 const dgram = require('dgram');
@@ -24,6 +23,11 @@ class Client {
         this.isConnected = false;
         this.tcpPort = null;
         this.udpPort = null;
+    }
+
+    setUser(user) {
+        this.user = user;
+        FileLoader.LoadFile("/pages/welcome/welcome.html");
     }
 
     connect(host, tcpPort, udpPort) {
@@ -70,25 +74,6 @@ class Client {
             );
         }
     }
-
-    handleWelcome(packet) {
-        //get the client ID
-        this.clientID = packet.read();
-
-        //send udp test packet
-        var packet = new Packet(Packet.PacketTypes.udpTest)
-        packet.write("UDP Test from client " + this.clientID);
-
-        this.sendUdpData(packet);
-    }
-
-    handleUDPTest(packet) {
-        console.log(packet);
-    }
-
-    handleLogin(packet) {
-        
-    }
 }
 
 class PacketHandler {
@@ -110,6 +95,24 @@ class PacketHandler {
        PacketHandler.Packets.set(packet.packetID, packet);
     }
 
+    static HandleWelcome(packet) {
+        let client = Client.GetInstance();
+        //get the client ID
+        client.clientID = packet.read("clientID");
+
+        //send udp test packet
+        var packet = new Packet(Packet.PacketTypes.udpTest)
+        packet.write("message", "UDP Test from client " + client.clientID);
+
+        client.sendUdpData(packet);
+    }
+
+
+    static HandleUDPTest(packet) {
+        //TODO
+        console.log(packet);
+    }
+
 }
 
 class Packet {
@@ -129,22 +132,24 @@ class Packet {
         },
         "welcome": {
             name: "welcome",
-            handler: (packet) => Client.GetInstance().handleWelcome(packet)
+            handler: (packet) => PacketHandler.HandleWelcome(packet)
         },
         "udpTest": {
             name: "udpTest",
-            handler: (packet) => Client.GetInstance().handleUDPTest(packet)
+            handler: (packet) => PacketHandler.HandleUDPTest(packet)
         },
         "login": {
-            name: "login",
-            handler: (packet) => Client.GetInstance().handleLogin(packet)
+            name: "login"
+        },
+        "register": {
+            name: "register"
         }
     }
 
     constructor(packetType) {
         this.packetID = Packet.LastPacketID++;
         this.packetType = packetType;
-        this.data = [];
+        this.data = {};
         this.onResponse = null;
     }
 
@@ -163,12 +168,16 @@ class Packet {
         return packet;
     }
 
-    write(data) {
-        this.data.push(data);
+    write(name, value) {
+        this.data[name] = value;
     }
 
-    read() {
-        return this.data.pop();
+    read(name) {
+        if(this.data[name]) {
+            return this.data[name];
+        }
+        
+        return undefined;
     }
 
     getJSON() {
@@ -180,5 +189,3 @@ class Packet {
     }
 
 }
-
-module.exports = { Client, Packet }

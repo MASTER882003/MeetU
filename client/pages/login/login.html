@@ -66,17 +66,36 @@
 
     $("#login").on("submit", (e) => {
         e.preventDefault();
-        IPCRenderer.GetInstance().ipc.send("login", { 
-            username: $("#login_username").val(),
-            password: $("#login_pass").val()
-        });
+
+        var loginPacket = new Packet(Packet.PacketTypes.login);
+        loginPacket.write("username", $("#login_username").val());
+        loginPacket.write("password", $("#login_pass").val());
+
+        loginPacket.onResponse = (packet) => {
+            console.log(packet);
+            if(packet.read("state") == "success") {
+                Client.GetInstance().setUser(packet.read("user"));
+            }
+            else {
+                alert(packet.message);
+            }
+        }
+
+        console.log(loginPacket);
+        Client.GetInstance().sendTcpData(loginPacket);
     });
 
     $("#register").on("submit", (e) => {
         e.preventDefault();
-        IPCRenderer.GetInstance().ipc.send("register", { 
-            username: $("#register_username").val(),
-            password: $("#register_pass").val()
-        });
+
+        var registerPacket = new Packet(Packet.PacketTypes.register);
+        registerPacket.write("username", $("#register_username").val());
+        registerPacket.write("password", $("#register_pass").val());
+
+        registerPacket.onResponse = (packet) => {
+            console.log(packet);
+        }
+
+        Client.GetInstance().sendTcpData(registerPacket);
     });
 </script>

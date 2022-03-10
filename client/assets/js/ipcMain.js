@@ -24,26 +24,13 @@ class IPCMain {
         return this.instance;
     }
 
-    constructor() {
+    constructor(win) {
+        this.win = win;
         //loadFile
         ipc.on("loadFile", (event, data) => {
             var fileContent = fs.readFileSync(PathBuilder.AppendToRoot(data.path));
 
             event.sender.send('loadfile-response', fileContent.toString());
-        });
-
-        //login
-        ipc.on("login", (event, data) => {
-            var loginPacket = new Packet(Packet.PacketTypes.login);
-            loginPacket.write(data.username);
-            loginPacket.write(data.password);
-
-            loginPacket.onResponse = (packet) => {
-                console.log("Server response");
-                console.log(packet.data);
-            }
-
-            Client.GetInstance().sendTcpData(loginPacket);
         });
     }
 
