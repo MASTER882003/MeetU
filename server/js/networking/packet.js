@@ -23,6 +23,10 @@ export class Packet {
         "register": {
             name: "register",
             handler: (client, packet) => PacketHandler.HandleRegisterPacket(client, packet)
+        },
+        "requestChats": {
+            name: "requestChats",
+            handler: (client, packet) => PacketHandler.HandleRequestChats(client, packet)
         }
     }
 

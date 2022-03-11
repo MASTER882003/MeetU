@@ -33,8 +33,15 @@
                     </li>
                 </ul>
                 <div id="user-info">
-                    <button id="btn-login" class="btn btn-info">Login</button>
-                    <button id="btn-register" class="btn btn-secondary">Register</button>
+                    <div id="not-logged-in">
+                        <button id="btn-login" class="btn btn-info">Login</button>
+                        <button id="btn-register" class="btn btn-secondary">Register</button>
+                    </div>
+                    <div id="logged-in" class="hide">
+                        <img src="" class="pfp">
+                        <br>
+                        <span class="username">{ username }</span>
+                    </div>
                 </div>
             </div>
             
@@ -45,8 +52,9 @@
     <script>window.$ = window.jQuery = require('jquery');</script>
     <script src="./assets/frameworks/bootstrap/bootstrap.js"></script>
     <script src="./assets/js/client.js"></script>
-    <script src="./assets/js/ipcRenderer.js"></script>
-    <script src="./assets/js/fileLoader.js"></script>
+    <script src="./assets/js/chatManager.js"></script>
+    <script src="./assets/js/util/ipcRenderer.js"></script>
+    <script src="./assets/js/util/fileLoader.js"></script>
     <script src="./assets/js/index.js"></script>
 </body>
 </html>

@@ -55,56 +55,99 @@ export class PacketHandler {
         console.log(`UDP TestMessage: '${packet.read("message")}'`);
     }
 
-    static async HandleLoginPacket(client, packet) {
+    static HandleLoginPacket(client, packet) {
+
+        var token = packet.read("token");
+
         var username = packet.read("username");
         var password = packet.read("password");
 
-        var loginResponsePacket = new Packet(Packet.PacketTypes.serverResponse);
-        loginResponsePacket.setRequestPacket(packet);
+        var tokenLogin = () => {
 
-        if(!username || !password) {
-            loginResponsePacket.write("state", "failed");
+            var loginResponsePacket = new Packet(Packet.PacketTypes.serverResponse);
+            loginResponsePacket.setRequestPacket(packet);
+
+            var res = this.DB().query(`SELECT id, username, img FROM user WHERE token='${token}'`);
+
+            if(res.length == 0) {
+                loginResponsePacket.write("state", "failed");
+
+                client.sendTcpData(loginResponsePacket);
+                return;
+            }
+
+            //create new token 
+            const newToken = crypto.randomBytes(16).toString("hex");
+            this.DB().query(`UPDATE user SET token='${newToken}' WHERE id=${res[0].id}`);
+
+            client.user = {
+                id: res[0].id,
+                username: res[0].username,
+                img: res[0].img
+            };
+
+            loginResponsePacket.write("state", "success");
+            loginResponsePacket.write("user", client.user);
+            loginResponsePacket.write("token", newToken);
             client.sendTcpData(loginResponsePacket);
-            return;
         }
 
-        username = this.DB().escape(username);
-
-        var result = this.DB().query(`SELECT * FROM user WHERE username='${username}'`);
-
-        if(result.length == 0) {
-            loginResponsePacket.write("state", "failed");
-            loginResponsePacket.write("message", "Username or password wrong");
+        var normalLogin = async () => {
+            var loginResponsePacket = new Packet(Packet.PacketTypes.serverResponse);
+            loginResponsePacket.setRequestPacket(packet);
+    
+            if(!username || !password) {
+                loginResponsePacket.write("state", "failed");
+                client.sendTcpData(loginResponsePacket);
+                return;
+            }
+    
+            username = this.DB().escape(username);
+            var result = this.DB().query(`SELECT * FROM user WHERE username='${username}'`);
+    
+            if(result.length == 0) {
+                loginResponsePacket.write("state", "failed");
+                loginResponsePacket.write("message", "Username or password wrong");
+                client.sendTcpData(loginResponsePacket);
+                return;
+            }
+    
+            var pwDB = result[0].password;
+            const compare = await bcrypt.compare(password, pwDB);
+    
+            if(!compare) {
+                loginResponsePacket.write("state", "failed");
+                loginResponsePacket.write("message", "Username or password wrong");
+                client.sendTcpData(loginResponsePacket);
+                return;
+            }
+    
+            client.user = {
+                id: result[0].id,
+                username: result[0].username,
+                img: result[0].img
+            };
+    
+            //create login token
+            const token = crypto.randomBytes(16).toString("hex");
+    
+            this.DB().query(`UPDATE user SET token='${token}' WHERE id=${client.user.id}`);
+    
+            loginResponsePacket.write("state", "success");
+            loginResponsePacket.write("user", client.user);
+            loginResponsePacket.write("token", token);
+    
             client.sendTcpData(loginResponsePacket);
-            return;
         }
 
-        var pwDB = result[0].password;
-        const compare = await bcrypt.compare(password, pwDB);
-
-        if(!compare) {
-            loginResponsePacket.write("state", "failed");
-            loginResponsePacket.write("message", "Username or password wrong");
-            client.sendTcpData(loginResponsePacket);
-            return;
+        if(token) {
+            tokenLogin();
         }
 
-        client.user = {
-            id: result[0].id,
-            username: result[0].username,
-            img: result[0].img
-        };
-
-        //create login token
-        const token = crypto.randomBytes(16).toString("hex");
-
-        this.DB().query(`UPDATE user SET token='${token}' WHERE id=${client.user.id}`);
-
-        loginResponsePacket.write("state", "success");
-        loginResponsePacket.write("user", client.user);
-        loginResponsePacket.write("token", token);
-
-        client.sendTcpData(loginResponsePacket);
+        else {
+            normalLogin();
+        }
+        
     }
 
     static async HandleRegisterPacket(client, packet) {
@@ -150,5 +193,21 @@ export class PacketHandler {
 
             client.sendTcpData(registerResponespacket);
         });
+    }
+
+    static HandleRequestChats(client, packet) {
+        var availableChats = [
+            {
+                name: "Global Chat",
+                messages: [],
+                participants: []
+            }
+        ];
+
+        var resPacket = new Packet(Packet.PacketTypes.serverResponse);
+        resPacket.setRequestPacket(packet);
+
+        resPacket.write("chats", availableChats);
+        client.sendTcpData(resPacket);
     }
 }

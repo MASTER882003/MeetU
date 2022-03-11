@@ -25,9 +25,23 @@ class Client {
         this.udpPort = null;
     }
 
-    setUser(user) {
+    setUser(user, token = null) {
         this.user = user;
-        FileLoader.LoadFile("/pages/welcome/welcome.html");
+
+        ChatManager.UserChange();
+
+        if(token != null) {
+            IPCRenderer.GetInstance().ipc.send("setSetting", { name: "login_token", value: token });
+        }
+
+        //display user on bottom left
+        $("#not-logged-in").addClass("hide");
+        $("#logged-in").removeClass("hide");
+
+        $("#logged-in .pfp").attr("src", FileLoader.CreateImagePath(user.img));
+        $("#logged-in .username").text(user.username);
+
+        ChatManager.Open();
     }
 
     connect(host, tcpPort, udpPort) {
@@ -39,6 +53,25 @@ class Client {
         this.tcp = new net.Socket();
         this.tcp.connect(tcpPort, host, () =>{
             console.log('Connected to TCP server!');
+
+            var loginToken = IPCRenderer.GetInstance().ipc.sendSync("getSetting", { name: "login_token" });
+
+            if(loginToken != undefined) {
+                var loginPacket = new Packet(Packet.PacketTypes.login);
+                loginPacket.write("token", loginToken);
+
+                loginPacket.onResponse = (packet) => {
+                    if(packet.read("state") == "success") {
+                        this.setUser(packet.read("user"), packet.read("token"));
+                    }
+                    else {
+                        IPCRenderer.GetInstance().ipc.send("setSetting", { name: "login_token", value: undefined });
+                    }
+                }
+
+                this.sendTcpData(loginPacket);
+            }
+            
         });
 
         this.tcp.on("data", (data) => {
@@ -143,6 +176,9 @@ class Packet {
         },
         "register": {
             name: "register"
+        },
+        "requestChats": {
+            name: "requestChats"
         }
     }
 

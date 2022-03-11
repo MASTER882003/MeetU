@@ -3,11 +3,15 @@ html, body {
     margin: 0;
     height: 100%;
 
-    --blue: rgb(0, 113, 206);
+    --blue: rgb(0, 158, 206);
 }
 
 body * {
     color: white;
+}
+
+.hide {
+    display: none !important;
 }
 
 .wrapper {
@@ -25,9 +29,9 @@ body * {
 
 #title {
     position: absolute;
-    left: 50%;
+    left: 100px;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
 }
 
 #logo img {
@@ -79,18 +83,47 @@ body * {
 
 #user-info {
     position: absolute;
-    height: 5%;
+    height: fit-content;
     bottom: 0;
     width: 100%;
     display: flex;
+    border-top: 2px solid white;
 }
 
-#user-info * {
+#not-logged-in {
+    display: flex;
+    width: 100%;
+}
+
+#user-info button {
     width: 50%;
+}
+
+#logged-in {
+    width: 100%;
+    position: relative;
+    align-items: center;
+    text-align: center;
+    padding: 5px;
+    background-color: var(--blue);
+}
+
+#logged-in .pfp{
+    width: 30%;
+    height: auto;
+    margin: auto auto;
+}
+
+#logged-in .username {
+    width: 100%;
 }
 
 #site-content {
     width: 86%;
     height: 100%;
     position: relative;
+}
+
+.pfp {
+    border-radius: 50%;
 }

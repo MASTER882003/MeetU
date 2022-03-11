@@ -1,9 +1,0 @@
-<h1>Willkommen <span id="username"></span></h1>
-<img src="" id="pfp" width="500" height="500">
-
-<script>
-    $(function() {
-        $("#username").text(Client.GetInstance().user.username);
-        $("#pfp").attr("src", FileLoader.CreateImagePath(Client.GetInstance().user.img));
-    })
-</script>

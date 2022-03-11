@@ -1,8 +1,7 @@
 const { app, BrowserWindow } = require('electron')
 const { ClientRequest } = require('http')
 const path = require('path')
-const { Client } = require('./assets/js/client');
-const { IPCMain } = require('./assets/js/ipcMain');
+const { IPCMain } = require('./assets/js/util/ipcMain');
 
 
 IPCMain.Create();

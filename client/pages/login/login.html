@@ -74,7 +74,7 @@
         loginPacket.onResponse = (packet) => {
             console.log(packet);
             if(packet.read("state") == "success") {
-                Client.GetInstance().setUser(packet.read("user"));
+                Client.GetInstance().setUser(packet.read("user"), packet.read("token"));
             }
             else {
                 alert(packet.message);
