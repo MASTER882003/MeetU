@@ -1,21 +1,16 @@
+import { ChatManager } from '../chat.js';
 import { PacketHandler } from './packetHandler.js';
 
 export class Packet {
 
-    static PacketTypes = {
+    static ServerPackets = {
+        "serverResponse": { name: "serverResponse", },
+        "welcome": { name: "welcome" },
+        "chat": { name: "chat"}
+    }
+
+    static ClientPackets = {
         
-        "serverResponse": {
-            name: "serverResponse",
-            handler: (client, packet) => {}
-        },
-        "welcome": {
-            name: "welcome",
-            handler: (client, packet) => PacketHandler.HandleWelcomePacket(client, packet)
-        },
-        "udpTest": {
-            name: "udpTest",
-            handler: (client, packet) => PacketHandler.HandleUDPTestPacket(client, packet)
-        },
         "login": {
             name: "login",
             handler: (client, packet) => PacketHandler.HandleLoginPacket(client, packet)
@@ -24,9 +19,13 @@ export class Packet {
             name: "register",
             handler: (client, packet) => PacketHandler.HandleRegisterPacket(client, packet)
         },
-        "requestChats": {
-            name: "requestChats",
-            handler: (client, packet) => PacketHandler.HandleRequestChats(client, packet)
+        "chat": {
+            name: "chat",
+            handler: (client, packet) => ChatManager.HandlePacket(client, packet)
+        },
+        "udpTest": {
+            name: "udpTest",
+            handler: (client, packet) => PacketHandler.HandleUDPTestPacket(client, packet)
         }
     }
 
@@ -37,7 +36,7 @@ export class Packet {
     }
 
     static CreatePacketByData(jsonData) {
-        var packet = new Packet(Packet.PacketTypes[jsonData.type]);
+        var packet = new Packet(Packet.ClientPackets[jsonData.type]);
         packet.data = jsonData.data;
         packet.packetID = jsonData.packetID;
 
@@ -53,7 +52,7 @@ export class Packet {
     }
 
     read(name) {
-        if(this.data[name]) {
+        if(this.data[name] != undefined) {
             return this.data[name];
         }
         

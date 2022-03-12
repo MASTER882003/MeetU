@@ -22,6 +22,15 @@ export class Server {
             client.appendTcpSocket(socket);
             Server.clients.set(client.id, client);
 
+            socket.on("close", () => {
+                console.log("Client disconnected: ID '" + client.id + "'");
+                Server.clients.delete(client.id);
+            });
+
+            socket.on("error", () => {
+                console.log("Client error: ID '" + client.id + "'");
+            })
+
             console.log("New client connected: " + socket.remoteAddress);
         });
 
@@ -65,6 +74,19 @@ export class Server {
 
     static GetClient(clientID) {
         return Server.clients.get(clientID);
+    }
+
+    static SendTcpDataToUsers(users, packet) {
+        if(users == "all") {
+            this.clients.forEach(client => {
+                if(client.user) {
+                    client.sendTcpData(packet);
+                }
+            });
+        }
+        else {
+            //TODO: only specific users
+        }
     }
 
 }

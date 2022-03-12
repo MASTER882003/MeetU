@@ -67,7 +67,7 @@
     $("#login").on("submit", (e) => {
         e.preventDefault();
 
-        var loginPacket = new Packet(Packet.PacketTypes.login);
+        var loginPacket = new Packet(Packet.ClientPackets.login);
         loginPacket.write("username", $("#login_username").val());
         loginPacket.write("password", $("#login_pass").val());
 
@@ -88,7 +88,7 @@
     $("#register").on("submit", (e) => {
         e.preventDefault();
 
-        var registerPacket = new Packet(Packet.PacketTypes.register);
+        var registerPacket = new Packet(Packet.ClientPackets.register);
         registerPacket.write("username", $("#register_username").val());
         registerPacket.write("password", $("#register_pass").val());
 

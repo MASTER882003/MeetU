@@ -16,7 +16,7 @@ export class Client {
         });
 
         //sending connect packet with the clientID
-        var welcomePacket = new Packet(Packet.PacketTypes.welcome);
+        var welcomePacket = new Packet(Packet.ServerPackets.welcome);
         welcomePacket.write("clientID", this.id);
 
         this.sendTcpData(welcomePacket);

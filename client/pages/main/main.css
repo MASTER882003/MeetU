@@ -1,0 +1,273 @@
+#main-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#window-container {
+    position: relative;
+    height: 95%;
+    width: 100%;
+    overflow: hidden;
+}
+
+#window-toolbar {
+    height: 5%;
+    width: 100%;
+    border-top: 1px solid white;
+    display: flex;
+    overflow-x: auto;
+    padding: 5px 5px 0 5px;
+}
+
+#window-toolbar * {
+    user-select: none;
+}
+
+.window {
+    position: absolute;
+    min-width: 150px;
+    min-height: 150px;
+
+    height: fit-content;
+    width: fit-content;
+
+    top: 20px;
+    left: 20px;
+
+    border: 1px solid white;
+    box-shadow: 0 0 5px var(--blue);
+    border-radius: 5px;
+
+    margin: 4px;
+}
+
+.window .window-border:hover {
+    cursor: pointer;
+}
+
+.window .window-head {
+    background-color: white;
+    padding: 1px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+}
+
+.window .window-head {
+    user-select: none;
+}
+.window .window-information {
+    padding: 2px;
+}
+
+.window .window-head .window-icon {
+    height: 20px;
+    width: auto;
+    border-radius: 50%;
+}
+
+.window .window-head .window-title {
+    font-size: 80%;
+    color: black;
+    text-overflow: ellipsis;
+}
+
+.window .window-head .window-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.window .window-head .window-tools div {
+    height: 100%;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.window .window-head .window-tools * {
+    color: black;
+    transition: all .5s ease;
+    cursor: pointer;
+}
+
+.window .window-head .window-tools .close-window:hover {
+    background-color: red;
+}
+
+.window .window-head .window-tools .minimize-window:hover {
+    background-color: lightgray;
+}
+
+.window .window-head .window-tools .close-window:hover * {
+    color: white;
+}
+
+.window .window-body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 30px;
+}
+
+.window-minimalized  {
+    height: 100%;
+    padding: 5px;
+    min-width: 150px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    border: 1px solid white;
+    border-bottom: none;
+    box-shadow: 0 0 2px var(--blue);
+
+    transition: all .5s ease;
+}
+
+.window-minimalized:hover {
+    background-color: var(--blue) !important;
+}
+
+.window-minimalized:hover * {
+    color: white !important;
+}
+
+.window-minimalized.window-open {
+    background-color: aliceblue;
+}
+
+.window-minimalized.window-open * {
+    color: black;
+}
+
+.window-minimalized .minimized-icon {
+    height: 80%;
+    margin-right: 5px;
+    width: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ------------------------------------------------------------------------ */
+/*                               CHAT                                       */
+/* ------------------------------------------------------------------------ */
+.chat-container {
+    padding: 20px;
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-main-content {
+    height: 100%;
+}
+
+.chat {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat .messages {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.chat-input-container {
+    display: flex;
+    background-color: white;
+    padding: 10px;
+    position: relative;
+    box-shadow: 0 0 10px var(--blue);
+    height: fit-content;
+    justify-self: flex-end;
+}
+
+.chat .chat-input {
+    width: 90%;
+    background: transparent;
+    color: black;
+    border: none;
+    outline: none;
+}
+
+.send-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: black;
+}
+
+.chat-title {
+    font-size: 140%;
+    text-align: center;
+    border-bottom: 1px solid white;
+    box-shadow: 0 10px 10px -10px var(--blue);
+}
+
+.message {
+    width: fit-content;
+    padding: 10px;
+}
+
+.message.own {
+    align-self: flex-end;
+}
+
+.message .message-content {
+    min-width: 70px;
+    min-height: 40px;
+    margin-bottom: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.message.own .message-content {
+    background-color: var(--blue);
+    border-radius: 10px 10px 0 10px;
+}
+
+.message .message-user {
+    display: flex;
+}
+
+.message.own .message-user {
+    flex-direction: row-reverse;
+}
+
+.message .username {
+    font-size: 90%;
+    display: flex;
+    align-items: center;
+    padding-right: 5px;
+}
+
+.message .pfp {
+    height: 40px;
+    width: 40px;
+}
+
+/* ------------------------------------------------------------------------ */
+/*                           Ende CHAT                                      */
+/* ------------------------------------------------------------------------ */

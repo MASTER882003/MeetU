@@ -41,7 +41,12 @@ class Client {
         $("#logged-in .pfp").attr("src", FileLoader.CreateImagePath(user.img));
         $("#logged-in .username").text(user.username);
 
-        ChatManager.Open();
+        WindowManager.Open(() =>  {
+            var chatWindow = new ChatWindow();
+            
+            chatWindow.openChat(ChatManager.GetChat(0));
+            chatWindow.window.show();
+        });
     }
 
     connect(host, tcpPort, udpPort) {
@@ -57,7 +62,7 @@ class Client {
             var loginToken = IPCRenderer.GetInstance().ipc.sendSync("getSetting", { name: "login_token" });
 
             if(loginToken != undefined) {
-                var loginPacket = new Packet(Packet.PacketTypes.login);
+                var loginPacket = new Packet(Packet.ClientPackets.login);
                 loginPacket.write("token", loginToken);
 
                 loginPacket.onResponse = (packet) => {
@@ -134,7 +139,7 @@ class PacketHandler {
         client.clientID = packet.read("clientID");
 
         //send udp test packet
-        var packet = new Packet(Packet.PacketTypes.udpTest)
+        var packet = new Packet(Packet.ClientPackets.udpTest)
         packet.write("message", "UDP Test from client " + client.clientID);
 
         client.sendUdpData(packet);
@@ -152,7 +157,7 @@ class Packet {
 
     static LastPacketID = 0;
 
-    static PacketTypes = {
+    static ServerPackets = {        
         "serverResponse": {
             name: "serverResponse",
             handler: (packet) => {
@@ -167,18 +172,24 @@ class Packet {
             name: "welcome",
             handler: (packet) => PacketHandler.HandleWelcome(packet)
         },
-        "udpTest": {
-            name: "udpTest",
-            handler: (packet) => PacketHandler.HandleUDPTest(packet)
-        },
+        "chat": {
+            name: "chat",
+            handler: (packet) => ChatManager.HandlePacket(packet)
+        }
+    }
+
+    static ClientPackets = {
         "login": {
             name: "login"
         },
         "register": {
             name: "register"
         },
-        "requestChats": {
-            name: "requestChats"
+        "chat": {
+            name: "chat"
+        },
+        "udpTest": {
+            name: "udpTest"
         }
     }
 
@@ -190,7 +201,14 @@ class Packet {
     }
 
     static CreatePacketByData(jsonData) {
-        var packet = new Packet(Packet.PacketTypes[jsonData.type]);
+        var packet = {};
+        if(Packet.ServerPackets[jsonData.type] != undefined) {
+            packet = new Packet(Packet.ServerPackets[jsonData.type]);
+        }
+        else {
+            packet = new Packet(Packet.ClientPackets[jsonData.type]);
+        }
+         
         packet.data = jsonData.data;
 
         if(jsonData.requestPacketID != undefined) {
@@ -209,7 +227,7 @@ class Packet {
     }
 
     read(name) {
-        if(this.data[name]) {
+        if(this.data[name] != undefined) {
             return this.data[name];
         }
         

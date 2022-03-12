@@ -64,7 +64,7 @@ export class PacketHandler {
 
         var tokenLogin = () => {
 
-            var loginResponsePacket = new Packet(Packet.PacketTypes.serverResponse);
+            var loginResponsePacket = new Packet(Packet.ServerPackets.serverResponse);
             loginResponsePacket.setRequestPacket(packet);
 
             var res = this.DB().query(`SELECT id, username, img FROM user WHERE token='${token}'`);
@@ -93,7 +93,7 @@ export class PacketHandler {
         }
 
         var normalLogin = async () => {
-            var loginResponsePacket = new Packet(Packet.PacketTypes.serverResponse);
+            var loginResponsePacket = new Packet(Packet.ServerPackets.serverResponse);
             loginResponsePacket.setRequestPacket(packet);
     
             if(!username || !password) {
@@ -154,7 +154,7 @@ export class PacketHandler {
         var username = packet.read("username");
         var password = packet.read("password");
 
-        let registerResponespacket = new Packet(Packet.PacketTypes.serverResponse);
+        let registerResponespacket = new Packet(Packet.ServerPackets.serverResponse);
         registerResponespacket.setRequestPacket(packet);
 
         if(username == undefined || password == undefined) {
@@ -193,21 +193,5 @@ export class PacketHandler {
 
             client.sendTcpData(registerResponespacket);
         });
-    }
-
-    static HandleRequestChats(client, packet) {
-        var availableChats = [
-            {
-                name: "Global Chat",
-                messages: [],
-                participants: []
-            }
-        ];
-
-        var resPacket = new Packet(Packet.PacketTypes.serverResponse);
-        resPacket.setRequestPacket(packet);
-
-        resPacket.write("chats", availableChats);
-        client.sendTcpData(resPacket);
     }
 }

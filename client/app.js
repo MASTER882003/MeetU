@@ -3,7 +3,6 @@ const { ClientRequest } = require('http')
 const path = require('path')
 const { IPCMain } = require('./assets/js/util/ipcMain');
 
-
 IPCMain.Create();
 
 function createWindow () {
@@ -21,7 +20,7 @@ function createWindow () {
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  createWindow();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
